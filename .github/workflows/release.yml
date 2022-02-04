@@ -1,0 +1,39 @@
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Test
+        run: |
+          go version
+          go test -v -race ./...
+
+      - name: Build for Release
+        run: |
+          env GOOS=darwin GOARCH=amd64 go build -o bin/keycloak_darwin_amd64 cmd/*.go
+          env GOOS=darwin GOARCH=arm64 go build -o bin/keycloak_darwin_arm64 cmd/*.go
+          env GOOS=linux GOARCH=amd64 go build -o bin/keycloak_linux_amd64 cmd/*.go
+          env GOOS=linux GOARCH=arm64 go build -o bin/keycloak_linux_arm64 cmd/*.go
+          sha256sum bin/* >> bin/SHA256SUMS
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            bin/keycloak_darwin_amd64
+            bin/keycloak_darwin_arm64
+            bin/keycloak_linux_amd64
+            bin/keycloak_linux_arm64
+            bin/SHA256SUMS
