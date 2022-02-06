@@ -8,7 +8,7 @@ import (
 )
 
 func TestExecEnvBasic(t *testing.T) {
-	m, err := decryptSubtree("../testdata/creds1.enc.yaml", "../testdata/keys.age", []string{"secrets"})
+	m, err := decryptSubtree("../testdata/creds1.enc.yaml", "../testdata/keys.age", []string{"secrets"}, true)
 	assert.Nil(t, err)
 	assert.Equal(t, 3, len(m))
 
