@@ -15,9 +15,10 @@ import (
 )
 
 var (
-	fileParam     string
-	keyFileParam  string
-	jsonPathParam string
+	fileParam                string
+	keyFileParam             string
+	jsonPathParam            string
+	deletePrivateKeyAfterUse bool
 )
 
 // execEnvCmd represents the execEnv command
@@ -65,13 +66,13 @@ var execEnvCmd = &cobra.Command{
 		}
 
 		jsonPathParts := strings.Split(jsonPath, ".")
-		return execEnv(file, keyFile, jsonPathParts, args...)
+		return execEnv(file, keyFile, jsonPathParts, deletePrivateKeyAfterUse, args...)
 	},
 }
 
-func execEnv(filePath string, keyFile string, jsonPath []string, command ...string) error {
+func execEnv(filePath string, keyFile string, jsonPath []string, deletePrivateKeyAfterUse bool, command ...string) error {
 	// decrypt subtree in file
-	st, err := decryptSubtree(filePath, keyFile, jsonPath)
+	st, err := decryptSubtree(filePath, keyFile, jsonPath, deletePrivateKeyAfterUse)
 	if err != nil {
 		return err
 	}
@@ -87,8 +88,8 @@ func execEnv(filePath string, keyFile string, jsonPath []string, command ...stri
 	return cmd.Run()
 }
 
-func decryptSubtree(filePath string, keyFile string, jsonPath []string) (map[string]interface{}, error) {
-	key, err := getKey(keyFile)
+func decryptSubtree(filePath string, keyFile string, jsonPath []string, deletePrivateKeyAfterUse bool) (map[string]interface{}, error) {
+	key, err := getKey(keyFile, deletePrivateKeyAfterUse)
 	if err != nil {
 		return nil, err
 	}
@@ -134,9 +135,18 @@ func prepareCommand(command []string, env []string) *exec.Cmd {
 	return cmd
 }
 
-func getKey(path string) (string, error) {
+func getKey(path string, deletePrivateKeyAfterUse bool) (string, error) {
 	var bites []byte
 	var err error
+
+	if deletePrivateKeyAfterUse {
+		defer func() {
+			if path != "" {
+				_ = os.Remove(path)
+			}
+			_ = os.Setenv("AGE_KEY", "")
+		}()
+	}
 
 	if path != "" {
 		// try given path
@@ -234,4 +244,5 @@ func init() {
 	_ = execEnvCmd.MarkFlagRequired("file")
 	execEnvCmd.Flags().StringVarP(&keyFileParam, "key", "k", "", "the private key file to read")
 	execEnvCmd.Flags().StringVarP(&jsonPathParam, "json-path", "p", "secrets", "the json path to the subtree to decrypt")
+	execEnvCmd.Flags().BoolVarP(&deletePrivateKeyAfterUse, "delete-private-key-after-use", "d", false, "deletes the private key locally after use")
 }
