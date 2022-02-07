@@ -25,7 +25,7 @@ var (
 var execEnvCmd = &cobra.Command{
 	Use:   "exec-env",
 	Short: "Start a child process with secrets in the environment.",
-	Long:  ``,
+	Long:  `Note bene: exec-env does not verify the path in any shape or form.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		file, err := cmd.Flags().GetString("file")
 		if err != nil {
@@ -35,24 +35,6 @@ var execEnvCmd = &cobra.Command{
 		file, err = filepath.Abs(file)
 		if err != nil {
 			return err
-		}
-
-		cwd, err := os.Getwd()
-		if err != nil {
-			return err
-		}
-
-		if !strings.HasPrefix(file, cwd) {
-			return fmt.Errorf("file path has to be under current working dir: %s", file)
-		}
-
-		executable, err := filepath.Abs(args[0])
-		if err != nil {
-			return err
-		}
-
-		if !strings.HasPrefix(executable, cwd) {
-			return fmt.Errorf("executable path [%s] has to be under current working dir [%s]", executable, cwd)
 		}
 
 		keyFile, err := cmd.Flags().GetString("key")
