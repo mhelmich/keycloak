@@ -77,8 +77,10 @@ func decryptSubtree(filePath string, keyFile string, jsonPath []string, deletePr
 	}
 
 	store, err := kk.GetStoreForFile(filePath)
-	if err != nil {
+	if err != nil && !os.IsNotExist(err) {
 		return nil, err
+	} else if err != nil && os.IsNotExist(err) {
+		return map[string]interface{}{}, nil
 	}
 
 	err = store.DecryptSubtree(key, jsonPath...)
