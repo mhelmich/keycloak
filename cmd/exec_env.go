@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -77,11 +78,16 @@ func decryptSubtree(filePath string, keyFile string, jsonPath []string, deletePr
 		return nil, err
 	}
 
+	// if no file with encrypted secrets exists,
+	// just return an empty map
+	_, err = os.Stat(filePath)
+	if errors.Is(err, os.ErrNotExist) {
+		return map[string]interface{}{}, nil
+	}
+
 	store, err := kk.GetStoreForFile(filePath)
 	if err != nil && !os.IsNotExist(err) {
 		return nil, err
-	} else if err != nil && os.IsNotExist(err) {
-		return map[string]interface{}{}, nil
 	}
 
 	err = store.DecryptSubtree(key, jsonPath...)
