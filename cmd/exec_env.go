@@ -148,7 +148,7 @@ func getKey(path string, deletePrivateKeyAfterUse bool) (string, error) {
 				}
 			}
 
-			return "", fmt.Errorf("")
+			return "", fmt.Errorf("did not find a suitable private key")
 		}
 	}
 
