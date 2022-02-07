@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -141,14 +142,18 @@ func getKey(path string, deletePrivateKeyAfterUse bool) (string, error) {
 
 			for {
 				line, err = r.ReadString('\n')
-				if err != nil {
-					break
-				} else if strings.HasPrefix(line, "AGE-SECRET-KEY-1") {
+				if err != nil && err != io.EOF {
+					return "", err
+				}
+
+				if strings.HasPrefix(line, "AGE-SECRET-KEY-1") {
 					return strings.TrimSpace(line), nil
 				}
-			}
 
-			return "", fmt.Errorf("did not find a suitable private key")
+				if err == io.EOF {
+					return "", fmt.Errorf("did not find a suitable private key")
+				}
+			}
 		}
 	}
 
