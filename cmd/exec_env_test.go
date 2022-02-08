@@ -8,7 +8,7 @@ import (
 )
 
 func TestExecEnvBasic(t *testing.T) {
-	m, err := decryptSubtree("../testdata/creds1.enc.yaml", "../testdata/keys.age", []string{"secrets"}, true)
+	m, err := decryptSubtree("../testdata/creds1.enc.yaml", "../testdata/keys.age", []string{"secrets"}, false)
 	assert.Nil(t, err)
 	assert.Equal(t, 3, len(m))
 
@@ -26,4 +26,10 @@ func TestExecEnvNoSecretFile(t *testing.T) {
 	m, err := decryptSubtree("does/not/exist", "../testdata/keys.age", []string{}, false)
 	assert.Nil(t, err)
 	assert.Equal(t, 0, len(m))
+}
+
+func TestExecEnvPathIsDir(t *testing.T) {
+	m, err := decryptSubtree("../testdata", "../testdata/keys.age", []string{}, false)
+	assert.NotNil(t, err)
+	assert.Nil(t, m)
 }

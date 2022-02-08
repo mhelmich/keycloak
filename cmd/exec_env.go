@@ -80,9 +80,13 @@ func decryptSubtree(filePath string, keyFile string, jsonPath []string, deletePr
 
 	// if no file with encrypted secrets exists,
 	// just return an empty map
-	_, err = os.Stat(filePath)
+	fi, err := os.Stat(filePath)
 	if errors.Is(err, os.ErrNotExist) {
 		return map[string]interface{}{}, nil
+	} else if fi.IsDir() {
+		return nil, fmt.Errorf("provided path is a direcotry but must be a file[%s]", filePath)
+	} else if err != nil {
+		return nil, err
 	}
 
 	store, err := kk.GetStoreForFile(filePath)
