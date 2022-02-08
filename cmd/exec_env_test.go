@@ -21,3 +21,9 @@ func TestExecEnvBasic(t *testing.T) {
 	assert.Equal(t, len(env), len(cmd.Env))
 	assert.Equal(t, "/bin/sh -c runner.sh", cmd.String())
 }
+
+func TestExecEnvNoSecretFile(t *testing.T) {
+	m, err := decryptSubtree("does/not/exist", "../testdata/keys.age", []string{}, false)
+	assert.Nil(t, err)
+	assert.Equal(t, 0, len(m))
+}
