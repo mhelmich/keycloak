@@ -47,6 +47,11 @@ func GetStoreWithFormat(path string, frmt FileFormat) (Store, error) {
 		return nil, err
 	}
 
+	return GetStoreFromBytes(bites, frmt)
+}
+
+// GetStoreFromBytes -
+func GetStoreFromBytes(bites []byte, frmt FileFormat) (Store, error) {
 	switch frmt {
 	case JSON:
 		return newJSONStore(bites)
