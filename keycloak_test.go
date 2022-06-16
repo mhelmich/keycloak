@@ -62,7 +62,8 @@ func TestMultiTreeFile(t *testing.T) {
 	fd2, err := ioutil.TempFile("", "TestMultiTreeFile2-")
 	assert.Nil(t, err)
 	defer fd2.Close()
-	store2.ToFile(fd2.Name())
+	err = store2.ToFile(fd2.Name())
+	assert.Nil(t, err)
 
 	// json diff the original file with the decrypted file
 	originalBites, err := ioutil.ReadFile("testdata/creds2.json")
