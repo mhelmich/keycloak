@@ -40,12 +40,3 @@ func TestExecEnvNoJsonPath(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, len(envBefore)+2, len(cmd.Env))
 }
-
-// func TestNarf(t *testing.T) {
-// 	store, err := kk.GetStoreForFile("../testdata/creds3.yml")
-// 	assert.Nil(t, err)
-// 	err = store.EncryptSubtree("age133p5vy8lw48dw59jdl7rrlpm50dslc6m6kpjc3slaq2edmqayyas5pv8se")
-// 	assert.Nil(t, err)
-// 	err = store.ToFile("../testdata/creds2.enc.yaml")
-// 	assert.Nil(t, err)
-// }
