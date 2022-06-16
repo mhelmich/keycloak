@@ -182,7 +182,7 @@ func traversePath(v interface{}, path ...string) (interface{}, error) {
 
 		i, err := strconv.ParseInt(path[0], 10, 32)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("invalid path: %s", err.Error())
 		}
 
 		return traversePath(v[i], path[1:]...)

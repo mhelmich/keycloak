@@ -1,0 +1,14 @@
+name: some-service
+secrets:
+  dev:
+    secret-name1: super-secret-password1
+    secret-name2: super-secret-password2
+    secret-name3: super-secret-password3
+  stage:
+    secret-name1: super-secret-password4
+    secret-name2: super-secret-password5
+    secret-name3: super-secret-password6
+  prod:
+    secret-name1: super-secret-password7
+    secret-name2: super-secret-password8
+    secret-name3: super-secret-password9
