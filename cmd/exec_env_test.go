@@ -33,3 +33,10 @@ func TestExecEnvPathIsDir(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Nil(t, m)
 }
+
+func TestExecEnvNoJsonPath(t *testing.T) {
+	envBefore := os.Environ()
+	cmd, err := buildCommandForExecEnv("../testdata/creds2.enc.yaml", "../testdata/keys.age", "", false)
+	assert.Nil(t, err)
+	assert.Equal(t, len(envBefore)+2, len(cmd.Env))
+}
